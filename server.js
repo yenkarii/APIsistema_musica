@@ -43,8 +43,9 @@ app.get("/artistas/:id", (req, res) => {
     });
 });
 
-app.post("/artistas", (req, res) => {
+app.post("/artistas/", (req, res) => {
 
+     const sql = `INSERT INTO artistas (nome, genero, pais) VALUES (?, ?, ?)`;
     const { nome, genero, pais } = req.body;
     if(!nome || !genero || !pais){
         return res.status(400).json({
@@ -52,7 +53,7 @@ app.post("/artistas", (req, res) => {
         });
     }
 
-    const sql = `INSERT INTO artistas (nome, genero, pais) VALUES (?,?,?)`;
+   
 
         conexao.query(sql, [nome, genero, pais], (erro, resultado) =>{
         if(erro){
@@ -63,7 +64,9 @@ app.post("/artistas", (req, res) => {
                 erro: "Artista não encontrado ou inexistente"
             });
         }
-        res.status(200).json(resultado[0]);
+        res.status(200).json({mensagem: "Artista cadastrado com sucesso!",
+            id: resultado.insertId
+        });
     });
 
 });
