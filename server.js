@@ -113,6 +113,42 @@ app.delete("/artistas/", (req, res) => {
     });
 });
 
+app.get("/artistas/:id/albuns", (req, res) => {
+    const id = Number(req.params.id);
+    const sql = `SELECT * FROM albuns WHERE artista_id = ?`;
+
+    conexao.query(sql, [id], (erro, resultado) => {
+        if(erro){
+            return res.status(500).json({erro: "Erro ao mostrar todos os álbuns de algum artista!"});
+        }
+        if(resultado.length === 0){
+            return res.status(404).json({erro: "Artista não encontrado ou inexistente."});
+        }
+        res.status(200).json(resultado);
+    });
+});
+
+app.get("/artistas/:id/musicas", (req, res) => {
+    const id = Number(req.params.id);
+    const sql = `
+    SELECT 
+        musicas.* FROM musicas 
+    INNER JOIN albuns
+    ON musicas.album_id = albuns.id 
+    WHERE albuns.artista_id = ?`; 
+
+    conexao.query(sql, [id], (erro, resultado) => {
+        if(erro){
+            return res.status(500).json({erro: "Erro ao mostrar todas as músicas de algum artista!"});
+        }
+        if(resultado.length === 0){
+            return res.status(404).json({erro: "Artista não encontrado ou inexistente."});
+        }
+        res.status(200).json(resultado);
+    });
+});
+
+
 // !! ----------------------------------- !! 
 // COMANDOS ALBUNS
 
