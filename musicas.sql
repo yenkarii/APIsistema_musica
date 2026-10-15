@@ -18,7 +18,7 @@ id INT AUTO_INCREMENT PRIMARY KEY,
 titulo VARCHAR(100) NOT NULL, 
 ano_lancamento INT NOT NULL,
 artista_id INT NOT NULL,
-FOREIGN KEY (artista_id) REFERENCES artistas(id)
+FOREIGN KEY (artista_id) REFERENCES artistas(id) ON DELETE CASCADE
 );
 
 INSERT INTO albuns (titulo, ano_lancamento, artista_id) VALUES
@@ -31,7 +31,7 @@ id INT AUTO_INCREMENT PRIMARY KEY,
 titulo VARCHAR(100) NOT NULL,
 duracao VARCHAR(10) NOT NULL,
 album_id INT NOT NULL,
-FOREIGN KEY(album_id) REFERENCES albuns(id)
+FOREIGN KEY(album_id) REFERENCES albuns(id) ON DELETE CASCADE
 );
 
 INSERT INTO musicas (titulo, duracao, album_id) VALUES
@@ -41,3 +41,4 @@ INSERT INTO musicas (titulo, duracao, album_id) VALUES
 ('Laputa', '2:44', 2),
 ('Hoe Cakes', '3:55', 3),
 ('One Beer', '4:19', 3); 
+
