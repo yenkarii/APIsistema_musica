@@ -26,7 +26,7 @@ app.get("/artistas", (req, res) => {
         if (erro) {
             return res.status(500).json({ erro: "Erro ao listar artistas" });
         }
-        res.json(resultado);
+        res.status(200).json(resultado);
     });
 });
 
@@ -123,7 +123,7 @@ app.get("/albuns", (req, res) => {
         if (erro) {
             return res.status(500).json({ erro: "Erro ao listar artistas" })
         }
-        res.json(resultado);
+        res.status(200).json(resultado);
     });
 });
 
@@ -203,6 +203,75 @@ app.delete("/albuns/:id", (req, res) => {
         if(resultado.affectedRows === 0){
             return res.status(404).json({erro: "Álbum não encontrado ou inexistente"})
         }
+        res.status(200).json(resultado);
+    })
+})
+
+// !! ----------------------------------- !! 
+// COMANDOS MUSICAS
+
+app.get("/musicas", (req, res) => {
+    const sql = 'SELECT * FROM musicas'
+
+    conexao.query(sql, (erro, resultado) => {
+        if(erro){
+            return res.status(500).json({erro: "Erro ao listar músicas"});
+        }
+        res.status(200).json(resultado);
+    });
+});
+
+app.get("/musicas/:id", (req, res) => {
+    const id = Number(req.params.id);
+
+    const sql = 'SELECT * FROM musicas WHERE id = ?';
+
+    conexao.query(sql,[id], (erro, resultado) => {
+        if(erro){
+            return res.status(500).json({erro: "Erro ao listar música específica"});
+        }
+        if(resultado.length === 0)
+        {
+            return res.status(404).json({erro: "Música não encontrada ou inexistente."});
+        }
+        res.status(200).json(resultado);
+    });
+});
+
+app.post("/musicas", (req, res) => {
+    const id = Number(req.params.id);
+
+    const sql = 'INSERT INTO musicas (titulo, duracao, album_id) VALUES (?, ?, ?)'
+    const { titulo, duracao, album_id } = req.body;
+    if(!titulo || !duracao ||!album_id){
+        return res.status(400).json({erro: "Informe título, duração (mm:ss) e o id do álbum respectivo."});
+    }
+
+    conexao.query(sql, [titulo, duracao, album_id], (erro, resultado) => {
+        if(erro){
+            return res.status(500).json({erro: "Erro ao cadastrar música!"});
+        }
+        res.status(200).json({
+            mensagem: "Música cadastrada com sucesso!",
+            id: resultado.insertId});
+    });
+});
+
+app.put("/musicas/:id", (req, res) => {
+    const id = Number(req.params.id);
+    const sql = 'UPDATE musicas SET titulo = ?, duracao = ?, album_id = ? WHERE id = ?';
+    const { titulo, duracao, album_id } = req.body;
+    if(!titulo || !duracao || !album_id){
+        return res.status(400).json({erro: "Informe título, duração (mm:ss) e id do álbum respectivo."})
+    }
+    conexao.query(sql, [titulo, duracao, album_id, id], (erro, resultado) => {
+        if(erro){
+            return res.status(500).json({erro: "Erro ao atualizar música!"});
+        }
+        if(resultado.affectedRows === 0){
+            return res.status(404).json({erro: "Música não encontrada ou inexistente."})
+        }
+
         res.status(200).json(resultado);
     })
 })
