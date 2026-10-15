@@ -273,8 +273,45 @@ app.put("/musicas/:id", (req, res) => {
         }
 
         res.status(200).json(resultado);
-    })
-})
+    });
+});
+
+app.get("/musicas-completas/:id", (req, res) => {
+
+    // nome da música
+    // duração
+    // título do álbum
+    // ano de lançamento
+    // nome do artista
+    // gênero do artista
+    // país do artista
+    const id = Number(req.params.id);
+const sql = `
+        SELECT 
+            musicas.id, 
+            musicas.titulo AS musica, 
+            musicas.duracao, 
+            albuns.titulo AS album, 
+            albuns.ano_lancamento, 
+            artistas.nome AS artista, 
+            artistas.genero, 
+            artistas.pais 
+        FROM musicas 
+        INNER JOIN albuns ON musicas.album_id = albuns.id 
+        INNER JOIN artistas ON albuns.artista_id = artistas.id
+        WHERE musicas.id = ?
+    `;
+
+    conexao.query(sql, [id], (erro, resultado) => {
+        if(erro){
+            return res.status(500).json({erro: "Erro ao mostrar música e outras informações!"});
+        }
+        if(resultado.length === 0){
+            return res.status(404).json({erro: "Música não encontrada ou inexistente"});
+        }
+        res.status(200).json(resultado);
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost${PORT}`)
